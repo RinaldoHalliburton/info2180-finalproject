@@ -29,14 +29,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     {
         if($contact['email'] === $email)
         {
-            $contact_info = array(
-                $contact['title'] . '' . $contact['firstname'] . ' ' . $contact['lastname'],
-                $contact['email'],
-                $contact['company'],
-                $contact['telephone'],
-                $contact['created_at'],
-                $contact['updated_at'],
-            );
+            $contact_info = [
+                'Name' => $contact['title'] . ' ' . $contact['firstname'] . ' ' . $contact['lastname'],
+                'E-mail' => $contact['email'],
+                'Company Name' => $contact['company'],
+                'Telephone' => $contact['telephone'],
+                'Created on' => $contact['created_at'],
+                'Updated on' => $contact['updated_at']
+            ];
             
             // Prepare the query with a placeholder for the ID
             $stmt = $pdo->prepare("SELECT CONCAT(firstname, ' ', lastname) AS fullname FROM Users WHERE id = :id");
@@ -46,7 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute();
             // Fetch the result
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            array_push($contact_info, $user['fullname']);
+            //array_push($contact_info, $user['fullname']);
+            $contact_info['Assigned to admin'] = $user['fullname'];
             
             
             $json_output = json_encode($contact_info);

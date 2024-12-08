@@ -4,8 +4,10 @@ window.onload = function () {
     .getElementById("login-button")
     .addEventListener("click", function (e) {
       e.preventDefault();
-      let email = document.getElementById("email-input").value.trim();
-      let password = document.getElementById("password-input").value.trim();
+      var email_input = document.getElementById("email-input");
+      var password_input = document.getElementById("password-input");
+      let email = email_input.value.trim();
+      let password = password_input.value.trim();
       var viewButton;
       var errorDiv = document.getElementById("error-div");
       var loginDiv = document.getElementById("login-div");
@@ -26,7 +28,7 @@ window.onload = function () {
       xhr.onreadystatechange = function () {
         if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
           response = xhr.responseText;
-          loadDashboard(response);
+          loadDashboard(response, email_input, password_input);
         }
       };
       xhr.send(params);
@@ -60,15 +62,14 @@ window.onload = function () {
       xhr.onreadystatechange = function () {
         if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
           response = xhr.responseText;
-          console.log(response);
-          //loadContact(response);
+          loadContact(response);
         }
       };
       xhr.send(params);
     });
 };
 
-function loadDashboard(response) {
+function loadDashboard(response, email_input, password_input) {
   errorDiv = document.getElementById("error-div");
   loginDiv = document.getElementById("login-div");
   dashboardDiv = document.getElementById("dashboard-div");
@@ -92,6 +93,8 @@ function loadDashboard(response) {
 
     if (dashboardDiv) {
       // Load the response into the dashboard div
+      email_input.value = "";
+      password_input.value = "";
       dashboardDiv.style.display = "block";
       dashboardDiv.innerHTML = "Dashboard";
       dashboardDiv.innerHTML += response;
@@ -116,5 +119,21 @@ function loadDashboard(response) {
         row.appendChild(newTd);
       });
     }
+  }
+}
+
+function loadContact(response) {
+  contactDiv = document.getElementById("view-contact-div");
+  let htmlCont = "";
+  if (errorDiv) errorDiv.style.display = "none"; // Hide error div
+  if (loginDiv) loginDiv.style.display = "none"; // Hide login form
+  if (dashboardDiv) dashboardDiv.style.display = "none"; // Hide dashboard
+  if (contactDiv) {
+    contactDiv.style.display = "block";
+    response = JSON.parse(response);
+    for (const [key, value] of Object.entries(response)) {
+      htmlCont += `<ul>${key}: ${value}</ul>`;
+    }
+    contactDiv.innerHTML = htmlCont;
   }
 }
