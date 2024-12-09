@@ -8,11 +8,13 @@ window.onload = function () {
       var password_input = document.getElementById("password-input");
       let email = email_input.value.trim();
       let password = password_input.value.trim();
-      var viewButton;
-      var errorDiv = document.getElementById("error-div");
-      var loginDiv = document.getElementById("login-div");
-      var dashboardDiv = document.getElementById("dashboard-div");
-      var viewContactDiv = document.getElementById("view-contacts-div");
+      //let viewButton = document.createElement("button");
+      //viewButton.id = "viewButton";
+      //viewButton.textContent = "view";
+      //var errorDiv = document.getElementById("error-div");
+      //var loginDiv = document.getElementById("login-div");
+      //var dashboardDiv = document.getElementById("dashboard-div");
+      //var viewContactDiv = document.getElementById("view-contact-div");
       let xhr = new XMLHttpRequest();
       let params = `email=${encodeURIComponent(
         email
@@ -33,46 +35,13 @@ window.onload = function () {
       };
       xhr.send(params);
     });
-
-  //Button action for view contact
-  document
-    .getElementById("dashboard-div")
-    .addEventListener("click", function (event) {
-      let params;
-      // Check if the clicked element is a View button
-      if (
-        event.target.tagName === "BUTTON" &&
-        event.target.textContent === "view"
-      ) {
-        const columnIndex = 1;
-        const row = event.target.closest("tr");
-        //console.log(row.cells[columnIndex].textContent.trim());
-        params = `email=${encodeURIComponent(
-          row.cells[columnIndex].textContent.trim()
-        )}`;
-      }
-      let xhr = new XMLHttpRequest();
-      xhr.open(
-        "POST",
-        "http://localhost/info2180-finalproject/viewcontact.php",
-        true
-      );
-      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-          response = xhr.responseText;
-          loadContact(response);
-        }
-      };
-      xhr.send(params);
-    });
 };
 
 function loadDashboard(response, email_input, password_input) {
-  errorDiv = document.getElementById("error-div");
-  loginDiv = document.getElementById("login-div");
-  dashboardDiv = document.getElementById("dashboard-div");
+  let errorDiv = document.getElementById("error-div");
+  let loginDiv = document.getElementById("login-div");
+  let dashboardDiv = document.getElementById("dashboard-div");
+  var viewButton;
 
   if (response === "Incorrect password.") {
     // Display error message for incorrect password
@@ -120,10 +89,47 @@ function loadDashboard(response, email_input, password_input) {
       });
     }
   }
+  const buttons = document.getElementsByTagName("button");
+  for (let i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener("click", function (event) {
+      let params;
+      // Check if the clicked element is a View button
+      if (
+        event.target.tagName === "BUTTON" &&
+        event.target.textContent === "view" &&
+        event.target
+      ) {
+        const columnIndex = 1;
+        const row = event.target.closest("tr");
+        //console.log(row.cells[columnIndex].textContent.trim());
+        params = `email=${encodeURIComponent(
+          row.cells[columnIndex].textContent.trim()
+        )}`;
+      }
+      let xhr = new XMLHttpRequest();
+      xhr.open(
+        "POST",
+        "http://localhost/info2180-finalproject/viewcontact.php",
+        true
+      );
+      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+          response = xhr.responseText;
+          loadContact(response);
+        }
+      };
+      xhr.send(params);
+    });
+  }
 }
 
 function loadContact(response) {
   contactDiv = document.getElementById("view-contact-div");
+  errorDiv = document.getElementById("error-div");
+  loginDiv = document.getElementById("login-div");
+  dashboardDiv = document.getElementById("dashboard-div");
   let htmlCont = "";
   if (errorDiv) errorDiv.style.display = "none"; // Hide error div
   if (loginDiv) loginDiv.style.display = "none"; // Hide login form

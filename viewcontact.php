@@ -48,6 +48,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             //array_push($contact_info, $user['fullname']);
             $contact_info['Assigned to admin'] = $user['fullname'];
+
+
+            $stmt = $pdo->prepare("SELECT CONCAT(firstname, ' ', lastname) AS fullname FROM Users WHERE id = :id");
+            $stmt->bindParam(':id', $contact['created_by'], PDO::PARAM_INT);
+            $stmt->execute();
+            $contact_info['Created by admin'] = $user['fullname'];
             
             
             $json_output = json_encode($contact_info);
