@@ -35,6 +35,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (password_verify($password, $user['password'])) {
             // Store user info in the session
             $_SESSION['user_id'] = $user['id'];
+            //$_SESSION['firstname'] = $user['firstname'];
+            //$_SESSION['lastname'] = $user['lastname'];
+            //$_SESSION['role'] = $user['role'];
             $_SESSION['email'] = $user['email'];
 
             //echo table of users by calling a func to create table
