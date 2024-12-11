@@ -60,7 +60,8 @@ function loadContacts($contacts) {
                 <th>Name</th>  
                 <th>Email</th>  
                 <th>Company</th>  
-                <th>Type</th>  
+                <th>Type</th>
+                <th> </th>  
             </tr>';
 
     // Iterate through contacts and add rows
@@ -75,7 +76,6 @@ function loadContacts($contacts) {
                 <td>" . htmlspecialchars($contact['email']) . "</td>    
                 <td>" . htmlspecialchars($contact['company']) . "</td>    
                 <td>" . htmlspecialchars($contact['type']) . "</td>  
-    
               </tr>";
     }
 

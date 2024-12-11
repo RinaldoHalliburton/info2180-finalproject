@@ -1,4 +1,6 @@
-window.onload = function () {
+window.onload = loadLogin;
+
+function loadLogin() {
   //Button action for login
   document
     .getElementById("login-button")
@@ -8,23 +10,12 @@ window.onload = function () {
       var password_input = document.getElementById("password-input");
       let email = email_input.value.trim();
       let password = password_input.value.trim();
-      //let viewButton = document.createElement("button");
-      //viewButton.id = "viewButton";
-      //viewButton.textContent = "view";
-      //var errorDiv = document.getElementById("error-div");
-      //var loginDiv = document.getElementById("login-div");
-      //var dashboardDiv = document.getElementById("dashboard-div");
-      //var viewContactDiv = document.getElementById("view-contact-div");
       let xhr = new XMLHttpRequest();
       let params = `email=${encodeURIComponent(
         email
       )}&password=${encodeURIComponent(password)}`;
 
-      xhr.open(
-        "POST",
-        "http://localhost/info2180-finalproject/startup.php",
-        true
-      );
+      xhr.open("POST", "startup.php", true);
       xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
       xhr.onreadystatechange = function () {
@@ -35,7 +26,7 @@ window.onload = function () {
       };
       xhr.send(params);
     });
-};
+}
 
 function loadDashboard(response, email_input, password_input) {
   let errorDiv = document.getElementById("error-div");
@@ -65,7 +56,6 @@ function loadDashboard(response, email_input, password_input) {
       email_input.value = "";
       password_input.value = "";
       dashboardDiv.style.display = "block";
-      dashboardDiv.innerHTML = "Dashboard";
       dashboardDiv.innerHTML += response;
 
       const table = dashboardDiv.querySelector("table");
@@ -107,11 +97,7 @@ function loadDashboard(response, email_input, password_input) {
         )}`;
       }
       let xhr = new XMLHttpRequest();
-      xhr.open(
-        "POST",
-        "http://localhost/info2180-finalproject/viewcontact.php",
-        true
-      );
+      xhr.open("POST", "viewcontact.php", true);
       xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
       xhr.onreadystatechange = function () {
@@ -126,10 +112,15 @@ function loadDashboard(response, email_input, password_input) {
 }
 
 function loadContact(response) {
-  contactDiv = document.getElementById("view-contact-div");
-  errorDiv = document.getElementById("error-div");
-  loginDiv = document.getElementById("login-div");
-  dashboardDiv = document.getElementById("dashboard-div");
+  let contactDiv = document.getElementById("view-contact-div");
+  let errorDiv = document.getElementById("error-div");
+  let loginDiv = document.getElementById("login-div");
+  let dashboardDiv = document.getElementById("dashboard-div");
+  let assignButton = document.createElement("button");
+  let typeButton = document.createElement("button");
+  let saveButton = document.createElement("button");
+  let buttonDiv = document.createElement("div");
+  buttonDiv.className = "button-group";
   let htmlCont = "";
   if (errorDiv) errorDiv.style.display = "none"; // Hide error div
   if (loginDiv) loginDiv.style.display = "none"; // Hide login form
@@ -138,8 +129,26 @@ function loadContact(response) {
     contactDiv.style.display = "block";
     response = JSON.parse(response);
     for (const [key, value] of Object.entries(response)) {
-      htmlCont += `<ul>${key}: ${value}</ul>`;
+      htmlCont += `<p>${key}: ${value}</p>`;
     }
+
     contactDiv.innerHTML = htmlCont;
+
+    //Assign to me button
+    assignButton.textContent = "Assign to me ";
+    const icon = document.createElement("i");
+    icon.classList.add("fa", "fa-hand-paper-o");
+    assignButton.appendChild(icon);
+    assignButton.classList.add("styled-button");
+    buttonDiv.appendChild(assignButton);
+
+    //Swap type Button
+    typeButton.textContent;
+
+    //contactDiv.appendChild(assignButton);
+    //typeButton.textContent = "Swap type";
+    //contactDiv.appendChild(typeButton);
+    //saveButton.textContent = "Save notes";
+    contactDiv.appendChild(buttonDiv);
   }
 }
