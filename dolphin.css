@@ -9,12 +9,71 @@ body {
     justify-content: flex-start;
     height: 100vh;
 }
+
+/* Sidebar styles */
+#sidebar {
+    width: 120px;
+    background-color: #1c2431;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    height: 100%; 
+}
+
+.sidebar-header {
+    padding: 20px;
+    background: #0056b3;
+    text-align: center;
+}
+
+.sidebar-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    margin: 0;
+}
+
+.sidebar-menu a {
+    display: block;
+    padding: 15px 20px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+}
+
+.sidebar-menu a:hover,
+.sidebar-menu a.active {
+    background: #007bff;
+    color: #fff;
+}
+
+/* Main content area */
+#main-content {
+    padding: 20px;
+    width: calc(100% - 250px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin-top: 20px;
+}
   
 /* Header styles */
 header {
     width: 100%;
     background-color: #1c2431;
-    padding: 1rem 4rem;
+    padding: 1rem;
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -44,6 +103,7 @@ header h1 {
     padding: 2rem;
     text-align: center;
     margin-top: 2rem;
+    margin-left: 20rem;
 }
   
 #login-div h2 {
@@ -71,6 +131,7 @@ header h1 {
 form {
     display: flex;
     flex-direction: column;
+    justify-content: center;
 }
   
 input[type="email"],
@@ -152,6 +213,7 @@ h1 {
 /* Tables */
 table {
     width: 100%;
+    max-width: 1000px; /* Prevent table from being too large */
     border-collapse: collapse;
     margin-top: 2em;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);

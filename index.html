@@ -12,6 +12,19 @@
     <title>Dolphin CRM</title>
   </head>
   <body>
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <ul class="sidebar-menu">
+        <li><a href="#" id="home-link" class="active"><i class="fa fa-home"></i> Home</a></li>
+        <li><a href="#" id="new-contact-link"><i class="fa fa-address-book"></i> New Contact</a></li>
+        <li><a href="#"><i class="fa fa-users"></i> Users</a></li>
+        <li><a href="#"><i class="fa fa-sign-out"></i> Logout</a></li>
+      </ul>
+    </div>
+    
+    <!-- Main content area -->
+    <div id="main-content">
+
     <!-- Header with logo and title -->
     <header>
       <img src="dolphin.jpg" alt="Dolphin CRM Logo" class="logo" />
@@ -41,6 +54,39 @@
         <button id="login-button">Login</button>
       </form>
     </div>
+    <!-- new user form -->
+    <div id="new-contact-section" class="content-section" style="display: none;">
+      <h2>New Contact</h2>
+      <form>
+        <div>
+          <label for="first-name">First Name</label>
+          <input type="text" id="first-name" placeholder="First Name" required />
+        </div>
+        <div>
+          <label for="last-name">Last Name</label>
+          <input type="text" id="last-name" placeholder="Last Name" required />
+        </div>
+        <div>
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="something@example.com" required />
+        </div>
+        <div>
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Password" required />
+        </div>
+        <div>
+          <label for="role">Role</label>
+          <select id="role" required>
+            <option value="Member">Member</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div>
+        <button type="submit" class="styled-button">Save</button>
+      </form>
+    </div>
+  </div>
+
+
     <!-- Dashboard and other sections -->
     <h1 id="title"></h1>
     <div class="filter" id="filter-div"></div>
