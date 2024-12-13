@@ -54,6 +54,7 @@ header h1 {
 .filter {
     display: flex;
     align-items: center; 
+    gap: 6px;
   }
   
   .filter select {
@@ -65,6 +66,10 @@ header h1 {
     color: #000000;
     outline: none;
   }
+
+
+  
+  
   
   
 /* Form styles */

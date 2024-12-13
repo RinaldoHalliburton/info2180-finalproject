@@ -53,6 +53,8 @@ function loadDashboard(response) {
   let dashboardDiv = document.getElementById("dashboard-div");
   let filterDiv = document.getElementById("filter-div");
   let title = document.getElementById("title");
+  let addContact = document.createElement("button");
+  addContact.textContent = "+ Add Contact";
 
   // Load the response into the dashboard div
   title.innerHTML = "Dashboard";
@@ -92,6 +94,7 @@ function loadDashboard(response) {
   dashboardDiv.innerHTML = response;
   filterDiv.appendChild(label);
   filterDiv.appendChild(select);
+  filterDiv.appendChild(addContact);
 
   const table = dashboardDiv.querySelector("table");
   const rows = table.querySelectorAll("tbody tr");
@@ -115,42 +118,42 @@ function loadDashboard(response) {
 
   const buttons = document.getElementsByTagName("button");
   for (let i = 0; i < buttons.length; i++) {
-    buttons[i].addEventListener("click", function (event) {
-      let params;
-      // Check if the clicked element is a View button
-      if (
-        event.target.tagName === "BUTTON" &&
-        event.target.textContent === "view" &&
-        event.target
-      ) {
+    if (buttons[i].tagName == "BUTTON" && buttons[i].textContent == "view") {
+      buttons[i].addEventListener("click", function (event) {
+        let params;
+        // Check if the clicked element is a View button
         const columnIndex = 0;
         const row = event.target.closest("tr");
         //console.log(row.cells[columnIndex].textContent.trim());
         params = `id=${encodeURIComponent(
           row.cells[columnIndex].textContent.trim()
         )}`;
-      }
-      let xhr = new XMLHttpRequest();
-      xhr.open("POST", "viewcontact.php", true);
-      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-          response = xhr.responseText;
-          try {
-            response = JSON.parse(response);
-          } catch (error) {
-            console.log("Error turning JSON to object ", error.message);
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "viewcontact.php", true);
+        xhr.setRequestHeader(
+          "Content-Type",
+          "application/x-www-form-urlencoded"
+        );
+
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+            response = xhr.responseText;
+            try {
+              response = JSON.parse(response);
+            } catch (error) {
+              console.log("Error turning JSON to object ", error.message);
+            }
+            console.log(response);
+            dashboardDiv.style.display = "none";
+            filterDiv.style.display = "none";
+            title.innerHTML = "Contact Details";
+            loadContact(response, params);
           }
-          console.log(response);
-          dashboardDiv.style.display = "none";
-          filterDiv.style.display = "none";
-          title.innerHTML = "Contact Details";
-          loadContact(response, params);
-        }
-      };
-      xhr.send(params);
-    });
+        };
+        xhr.send(params);
+      });
+    }
   }
 
   select.addEventListener("change", function (e) {
@@ -167,48 +170,48 @@ function loadDashboard(response) {
         dashboardDiv.innerHTML = response;
         const buttons = document.getElementsByTagName("button");
         for (let i = 0; i < buttons.length; i++) {
-          buttons[i].addEventListener("click", function (event) {
-            let params;
-            // Check if the clicked element is a View button
-            if (
-              event.target.tagName === "BUTTON" &&
-              event.target.textContent === "view" &&
-              event.target
-            ) {
+          if (
+            buttons[i].tagName == "BUTTON" &&
+            buttons[i].textContent == "view"
+          ) {
+            buttons[i].addEventListener("click", function (event) {
+              let params;
+              // Check if the clicked element is a View button
               const columnIndex = 0;
               const row = event.target.closest("tr");
               //console.log(row.cells[columnIndex].textContent.trim());
               params = `id=${encodeURIComponent(
                 row.cells[columnIndex].textContent.trim()
               )}`;
-            }
-            let xhr = new XMLHttpRequest();
-            xhr.open("POST", "viewcontact.php", true);
-            xhr.setRequestHeader(
-              "Content-Type",
-              "application/x-www-form-urlencoded"
-            );
 
-            xhr.onreadystatechange = function () {
-              if (
-                xhr.readyState === XMLHttpRequest.DONE &&
-                xhr.status === 200
-              ) {
-                response = xhr.responseText;
-                try {
-                  response = JSON.parse(response);
-                } catch (error) {
-                  console.log("Error turning JSON to object ", error.message);
+              let xhr = new XMLHttpRequest();
+              xhr.open("POST", "viewcontact.php", true);
+              xhr.setRequestHeader(
+                "Content-Type",
+                "application/x-www-form-urlencoded"
+              );
+
+              xhr.onreadystatechange = function () {
+                if (
+                  xhr.readyState === XMLHttpRequest.DONE &&
+                  xhr.status === 200
+                ) {
+                  response = xhr.responseText;
+                  try {
+                    response = JSON.parse(response);
+                  } catch (error) {
+                    console.log("Error turning JSON to object ", error.message);
+                  }
+                  console.log(response);
+                  dashboardDiv.style.display = "none";
+                  filterDiv.style.display = "none";
+                  title.innerHTML = "Contact Details";
+                  loadContact(response, params);
                 }
-                console.log(response);
-                dashboardDiv.style.display = "none";
-                filterDiv.style.display = "none";
-                title.innerHTML = "Contact Details";
-                loadContact(response, params);
-              }
-            };
-            xhr.send(params);
-          });
+              };
+              xhr.send(params);
+            });
+          }
         }
       }
     };
