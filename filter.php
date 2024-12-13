@@ -19,44 +19,39 @@ try {
     exit();
 }
 
-// Check if POST data is received
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Sanitize input
-    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
-    $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
 
-    // Query the database for the user
-    $stmt = $pdo->prepare('SELECT * FROM users WHERE email = :email');
-    $stmt->execute(['email' => $email]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($user) {
-        // Verify password
-        if (password_verify($password, $user['password'])) {
-            // Store user info in the session
-            $_SESSION['user_id'] = $user['id'];
-            //$_SESSION['firstname'] = $user['firstname'];
-            //$_SESSION['lastname'] = $user['lastname'];
-            $_SESSION['role'] = $user['role'];
-            $_SESSION['email'] = $user['email'];
-
-            //echo table of users by calling a func to create table
-            loadContacts($contacts);
-        } else {
-            echo "Incorrect password.";
-        }
-    } else {
-        echo "Email not found.";
+    $selected = filter_input(INPUT_POST, 'selected', FILTER_SANITIZE_STRING);
+    if ($selected == "All") {
+        $stmt = $pdo->prepare('SELECT * FROM contacts');
+        $stmt->execute();
+        $contacts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        loadContacts($contacts);
+    } else if ($selected == "Sales Lead") {
+        $stmt = $pdo->prepare('SELECT * FROM contacts WHERE type = :type');
+        $stmt->bindParam(':type', $selected);
+        $stmt->execute();
+        $contacts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        loadContacts($contacts);
+    } else if ($selected == "Support") {
+        $stmt = $pdo->prepare('SELECT * FROM contacts WHERE type = :type');
+        $stmt->bindParam(':type', $selected);
+        $stmt->execute();
+        $contacts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        loadContacts($contacts);
+    } else if ($selected == "Assigned to me") {
+        $stmt = $pdo->prepare('SELECT * FROM contacts WHERE assigned_to = :id');
+        $stmt->bindParam(':id', $_SESSION['user_id'], PDO::PARAM_INT);
+        $stmt->execute();
+        $contacts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        loadContacts($contacts);
     }
-} else {
-    echo "Invalid request method.";
 }
 
 
 function loadContacts($contacts)
 {
     // Start the table and add the header row
-
 
     echo '<table border="1"> 
             <tr>
@@ -81,12 +76,15 @@ function loadContacts($contacts)
                     <td>" . $fullName . "</td>   
                     <td>" . htmlspecialchars($contact['email']) . "</td>    
                     <td>" . htmlspecialchars($contact['company']) . "</td>    
-                    <td>" . htmlspecialchars($contact['type']) . "</td>  
+                    <td>" . htmlspecialchars($contact['type']) . "</td>
+                    
                 </tr>
             </tbody>";
     }
 
     // Close the table
     echo '</table>';
+    // $json_output = json_encode($contacts);
+    //echo $json_output;
     return;
 }

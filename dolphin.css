@@ -50,6 +50,22 @@ header h1 {
     font-size: 1.5rem;
     margin-bottom: 1.5rem;
 }
+
+.filter {
+    display: flex;
+    align-items: center; 
+  }
+  
+  .filter select {
+    font-size: 16px;
+    padding: 8px;
+    border: 1px solid #4336d1;
+    border-radius: 4px;   /* Rounded corners */
+    background-color: #fff;
+    color: #000000;
+    outline: none;
+  }
+  
   
 /* Form styles */
 form {
@@ -114,6 +130,24 @@ h1 {
     transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth animations */
   }
 
+/*For viwing a contact*/
+  .details {
+    line-height: 1.8;
+  }
+
+  .details span {
+    font-weight: bold;
+    color: #555;
+  }
+
+  .details p {
+    margin: 0;
+  }
+
+  .details .highlight {
+    color: #007BFF;
+  }
+
 
 /* Tables */
 table {
@@ -133,7 +167,7 @@ table th, table td {
 }
 
 table th {
-    background: #037171; /* Deep teal header */
+    background: #1a2e71; /* Deep teal header */
     color: #FFFFFF;
     font-weight: 500;
 }
@@ -147,7 +181,7 @@ table tbody tr:nth-child(even) {
 }
 
 table tbody tr:hover {
-    background: #00B9AE; /* Teal hover effect */
+    background: #4267e1; /* Teal hover effect */
     color: #FFFFFF;
 }
 
