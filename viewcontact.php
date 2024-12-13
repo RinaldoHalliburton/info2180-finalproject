@@ -24,16 +24,17 @@ try {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitize input
-    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+    $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
    foreach($contacts as $contact)
     {
-        if($contact['email'] === $email)
+        if($contact['id'] === $id)
         {
             $contact_info = [
                 'Name' => $contact['title'] . ' ' . $contact['firstname'] . ' ' . $contact['lastname'],
                 'E-mail' => $contact['email'],
                 'Company Name' => $contact['company'],
                 'Telephone' => $contact['telephone'],
+                'Type' => $contact['type'],
                 'Created on' => $contact['created_at'],
                 'Updated on' => $contact['updated_at']
             ];
@@ -47,13 +48,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Fetch the result
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             //array_push($contact_info, $user['fullname']);
-            $contact_info['Assigned to admin'] = $user['fullname'];
+            $contact_info['Assigned to'] = $user['fullname'];
 
 
             $stmt = $pdo->prepare("SELECT CONCAT(firstname, ' ', lastname) AS fullname FROM Users WHERE id = :id");
             $stmt->bindParam(':id', $contact['created_by'], PDO::PARAM_INT);
             $stmt->execute();
-            $contact_info['Created by admin'] = $user['fullname'];
+            $contact_info['Created by'] = $user['fullname'];
             
             
             $json_output = json_encode($contact_info);

@@ -56,7 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 function loadContacts($contacts) {
     // Start the table and add the header row
     echo '<table border="1"> 
-            <tr>  
+            <tr>
+                <th>ID</td>  
                 <th>Name</th>  
                 <th>Email</th>  
                 <th>Company</th>  
@@ -71,12 +72,15 @@ function loadContacts($contacts) {
                     htmlspecialchars($contact['firstname']) . ' ' .
                     htmlspecialchars($contact['lastname']);
 
-        echo "<tr>  
-                <td>" . $fullName . "</td>   
-                <td>" . htmlspecialchars($contact['email']) . "</td>    
-                <td>" . htmlspecialchars($contact['company']) . "</td>    
-                <td>" . htmlspecialchars($contact['type']) . "</td>  
-              </tr>";
+    echo   "<tbody>
+                <tr>  
+                    <td>" . htmlspecialchars($contact['id']) . "</td>
+                    <td>" . $fullName . "</td>   
+                    <td>" . htmlspecialchars($contact['email']) . "</td>    
+                    <td>" . htmlspecialchars($contact['company']) . "</td>    
+                    <td>" . htmlspecialchars($contact['type']) . "</td>  
+                </tr>
+            </tbody>";
     }
 
     // Close the table

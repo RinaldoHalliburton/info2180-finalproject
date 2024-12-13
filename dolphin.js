@@ -33,6 +33,7 @@ function loadDashboard(response, email_input, password_input) {
   let loginDiv = document.getElementById("login-div");
   let dashboardDiv = document.getElementById("dashboard-div");
   var viewButton;
+  let title = document.getElementById("title-div");
 
   if (response === "Incorrect password.") {
     // Display error message for incorrect password
@@ -55,8 +56,9 @@ function loadDashboard(response, email_input, password_input) {
       // Load the response into the dashboard div
       email_input.value = "";
       password_input.value = "";
+      title.innerHTML = "Dashboard";
       dashboardDiv.style.display = "block";
-      dashboardDiv.innerHTML += response;
+      dashboardDiv.innerHTML = response;
 
       const table = dashboardDiv.querySelector("table");
       const rows = table.querySelectorAll("tbody tr");
@@ -89,10 +91,10 @@ function loadDashboard(response, email_input, password_input) {
         event.target.textContent === "view" &&
         event.target
       ) {
-        const columnIndex = 1;
+        const columnIndex = 0;
         const row = event.target.closest("tr");
         //console.log(row.cells[columnIndex].textContent.trim());
-        params = `email=${encodeURIComponent(
+        params = `id=${encodeURIComponent(
           row.cells[columnIndex].textContent.trim()
         )}`;
       }
@@ -103,7 +105,8 @@ function loadDashboard(response, email_input, password_input) {
       xhr.onreadystatechange = function () {
         if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
           response = xhr.responseText;
-          loadContact(response);
+          title.style.display = "none";
+          loadContact(response, params);
         }
       };
       xhr.send(params);
@@ -111,15 +114,16 @@ function loadDashboard(response, email_input, password_input) {
   }
 }
 
-function loadContact(response) {
+function loadContact(response, params) {
   let contactDiv = document.getElementById("view-contact-div");
   let errorDiv = document.getElementById("error-div");
   let loginDiv = document.getElementById("login-div");
   let dashboardDiv = document.getElementById("dashboard-div");
   let assignButton = document.createElement("button");
   let typeButton = document.createElement("button");
-  let saveButton = document.createElement("button");
+  let addnote = document.createElement("button");
   let buttonDiv = document.createElement("div");
+  let title = document.createElement("title-div");
   buttonDiv.className = "button-group";
   let htmlCont = "";
   if (errorDiv) errorDiv.style.display = "none"; // Hide error div
@@ -127,7 +131,13 @@ function loadContact(response) {
   if (dashboardDiv) dashboardDiv.style.display = "none"; // Hide dashboard
   if (contactDiv) {
     contactDiv.style.display = "block";
-    response = JSON.parse(response);
+    title.style.display = "block";
+    try {
+      response = JSON.parse(response);
+    } catch (error) {
+      console.log("An error occurred:", error.message);
+    }
+
     for (const [key, value] of Object.entries(response)) {
       htmlCont += `<p>${key}: ${value}</p>`;
     }
@@ -143,7 +153,9 @@ function loadContact(response) {
     buttonDiv.appendChild(assignButton);
 
     //Swap type Button
-    typeButton.textContent;
+    typeButton.textContent = "Swap type";
+    typeButton.classList.add("styled-button");
+    buttonDiv.appendChild(typeButton);
 
     //contactDiv.appendChild(assignButton);
     //typeButton.textContent = "Swap type";
@@ -151,4 +163,34 @@ function loadContact(response) {
     //saveButton.textContent = "Save notes";
     contactDiv.appendChild(buttonDiv);
   }
+  assignButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    let xhr = new XMLHttpRequest();
+
+    xhr.open("POST", "switchAdmin.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+        response = xhr.responseText;
+        console.log(response);
+        try {
+          response = JSON.parse(response);
+        } catch (error) {
+          console.log("An error occurred:", error.message);
+        }
+        console.log(response);
+        let htmlCont = "";
+        //contactDiv.innerHTML = htmlCont;
+        //response = JSON.parse(response);
+        for (const [key, value] of Object.entries(response)) {
+          htmlCont += `<p>${key}: ${value}</p>`;
+        }
+        console.log(htmlCont);
+        contactDiv.innerHTML = htmlCont;
+      }
+    };
+    xhr.send(params);
+  });
+  return;
 }
