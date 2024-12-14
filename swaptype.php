@@ -20,20 +20,15 @@ try {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitize input
     $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
-
+    $type = filter_input(INPUT_POST, 'newType', FILTER_SANITIZE_STRING);
 
     // Query the database for update
-
     if ($id) {
-        $stmt = $pdo->prepare('UPDATE contacts SET assigned_to = :assigned_to WHERE id = :id');
-        $stmt->bindParam(':assigned_to', $_SESSION['user_id'], PDO::PARAM_INT);
+        $stmt = $pdo->prepare('UPDATE contacts SET type = :type WHERE id = :id');
+        $stmt->bindParam(':type', $type);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
 
-        /*$stmt = $pdo->prepare("SELECT * FROM contacts WHERE id = :id");
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
-        $contact = $stmt->fetchAll(PDO::FETCH_ASSOC);*/
 
         if ($id != $_SESSION['user_id']) {
             date_default_timezone_set('America/Jamaica');
@@ -44,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute();
         }
 
-        echo "Assignment successful.";
+        echo "Type change successful.";
         return;
     } else {
         echo "Not successfully changed";

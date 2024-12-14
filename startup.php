@@ -82,6 +82,7 @@ function loadContacts($contacts)
                     <td>" . htmlspecialchars($contact['email']) . "</td>    
                     <td>" . htmlspecialchars($contact['company']) . "</td>    
                     <td>" . htmlspecialchars($contact['type']) . "</td>  
+                    <td><button>view</button></td>
                 </tr>
             </tbody>";
     }

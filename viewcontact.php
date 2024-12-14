@@ -14,8 +14,6 @@ try {
     // Fetch all entries from the 'contacts' table
     $stmt = $pdo->query("SELECT * FROM contacts");
     $contacts = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    
 } catch (PDOException $e) {
     echo "Database connection failed: " . $e->getMessage();
     exit();
@@ -25,10 +23,14 @@ try {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitize input
     $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
-   foreach($contacts as $contact)
-    {
-        if($contact['id'] === $id)
-        {
+    $stmt = $pdo->prepare("SELECT comment,created_at FROM Notes WHERE contact_id = :contact_id AND created_by = :created_by");
+    $stmt->bindParam(':contact_id', $id, PDO::PARAM_INT);
+    $stmt->bindParam(':created_by', $_SESSION["user_id"], PDO::PARAM_INT);
+    $stmt->execute();
+    $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($contacts as $contact) {
+        if ($contact['id'] === $id) {
             $contact_info = [
                 'Name' => $contact['title'] . ' ' . $contact['firstname'] . ' ' . $contact['lastname'],
                 'E-mail' => $contact['email'],
@@ -36,9 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'Telephone' => $contact['telephone'],
                 'Type' => $contact['type'],
                 'Created on' => $contact['created_at'],
-                'Updated on' => $contact['updated_at']
+                'Updated on' => $contact['updated_at'],
             ];
-            
+
             // Prepare the query with a placeholder for the ID
             $stmt = $pdo->prepare("SELECT CONCAT(firstname, ' ', lastname) AS fullname FROM Users WHERE id = :id");
             // Bind the dynamic ID parameter
@@ -55,13 +57,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindParam(':id', $contact['created_by'], PDO::PARAM_INT);
             $stmt->execute();
             $contact_info['Created by'] = $user['fullname'];
-            
-            
+
+            $contact_info['Notes'] = $notes;
+
+
+
             $json_output = json_encode($contact_info);
             echo $json_output;
             return;
         }
     }
 }
-
-?>
