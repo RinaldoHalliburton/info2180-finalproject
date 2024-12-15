@@ -1,0 +1,112 @@
+/* Dashboard specific styles */
+body {
+    display: flex;
+    flex-direction: column; /* Ensures vertical stacking of header, main, and footer */
+    min-height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* Sidebar navigation */
+.sidenav {
+    height: 100%;
+    width: 250px; /* Set the width of the sidebar */
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden; /* Prevent horizontal scrollbar */
+    padding-top: 20px;
+    transition: 0.5s; /* Smooth transition for sidebar movements */
+}
+
+/* Sidebar links */
+.sidenav a {
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 18px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+/* Hover effect on sidebar links */
+.sidenav a:hover {
+    color: #f1f1f1;
+}
+
+/* Main content */
+.main {
+    flex: 1; /* Takes up remaining space */
+    margin-left: 260px; /* Offset by sidebar width */
+    padding: 20px;
+    transition: margin-left 0.5s; /* Smooth transition for sidebar toggle */
+}
+
+/* Add contact button */
+.add-contact-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px; /* Rounded corners */
+    position: absolute; /* Ensure the button is positioned relative to its container */
+    right: 20px; /* Right offset */
+    top: 20px; /* Top offset */
+}
+
+.add-contact-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Adjusting table and other dashboard components */
+#dashboard-div table {
+    width: 100%;
+    margin-top: 20px; /* Ensure some spacing */
+    border-collapse: collapse; /* Removes space between borders */
+}
+
+.filter {
+    margin-bottom: 20px;
+}
+
+/* Header styles */
+header {
+    width: 100%;
+    background-color: #1c2431;
+    color: white;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Adjust for alignment */
+}
+
+/* Adjusting for the logo and menu to be properly spaced */
+header .menu-icon {
+    display: flex;
+    align-items: center;
+    font-size: 30px; /* Icon size */
+    cursor: pointer;
+    padding: 10px;
+}
+
+header .logo-title-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1; /* Ensures it takes up the available space for centering */
+}
+
+header img.logo {
+    height: 40px;
+    margin-right: 20px; /* Space between logo and title */
+}
+
+header h1 {
+    margin: 0;
+}

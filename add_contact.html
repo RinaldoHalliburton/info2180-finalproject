@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="dolphin.css">
+    <title>Add New Contact | Dolphin CRM</title>
+</head>
+<body>
+    <header>
+        <img src="dolphin.jpg" alt="Dolphin CRM Logo" class="logo" />
+        <h1>Dolphin CRM - Add Contact</h1>
+    </header>
+
+    <div id="add-contact-div">
+        <h2>Add New Contact</h2>
+        <form id="add-contact-form">
+            <input type="text" id="title" name="title" placeholder="Title" required />
+            <input type="text" id="firstName" name="firstName" placeholder="First Name" required />
+            <input type="text" id="lastName" name="lastName" placeholder="Last Name" required />
+            <input type="email" id="email" name="email" placeholder="Email" required />
+            <input type="text" id="telephone" name="telephone" placeholder="Telephone" />
+            <input type="text" id="company" name="company" placeholder="Company" />
+            <select id="type" name="type">
+                <option value="Sales Lead">Sales Lead</option>
+                <option value="Support">Support</option>
+            </select>
+            <select id="assignedTo" name="assignedTo"></select>
+            <button type="button" onclick="submitContactForm()">Save Contact</button>
+        </form>
+    </div>
+
+    <script src="add_contact.js"></script>
+    <footer>
+        <p>&copy; 2023 Dolphin CRM</p>
+    </footer>
+</body>
+</html>
