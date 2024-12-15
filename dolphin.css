@@ -18,6 +18,7 @@ header {
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    
 }
   
 header .logo {
@@ -51,13 +52,13 @@ header h1 {
     margin-bottom: 1.5rem;
 }
 
-.filter {
+.dropdown {
     display: flex;
     align-items: center; 
     gap: 6px;
   }
   
-  .filter select {
+  .dropdown select {
     font-size: 16px;
     padding: 8px;
     border: 1px solid #4336d1;
@@ -66,6 +67,49 @@ header h1 {
     color: #000000;
     outline: none;
   }
+
+
+  .form-label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+  }
+  
+  .name-container {
+    display: flex;
+    gap: 15px; /* Space between First Name and Last Name fields */
+    margin-top: 15px;
+  }
+  
+  .form-label-inline {
+    display: flex;
+    align-items: center;
+    margin-right: 5px;
+  }
+  
+  .form-input-inline {
+    flex: 1; /* Ensures the input fields take equal space */
+    padding: 8px;
+    box-sizing: border-box;
+  }
+  
+  .form {
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
 
 
   

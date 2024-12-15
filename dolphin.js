@@ -54,6 +54,8 @@ function loadDashboard(responseHTML) {
   showElement(title);
   showElement(dashboardDiv);
 
+  createNavigationMenu();
+
   // Insert dashboard HTML content
   dashboardDiv.innerHTML = responseHTML;
 
@@ -81,6 +83,7 @@ function setupDashboardUI(filterDiv) {
   const addContact = document.createElement("button");
   addContact.textContent = "+ Add Contact";
   addContact.style.marginLeft = "10px";
+  addContact.addEventListener("click", handleAddContact);
 
   filterDiv.appendChild(label);
   filterDiv.appendChild(select);
@@ -161,6 +164,7 @@ function showContactDetails(response, params) {
 
 function loadContact(response, params) {
   const contactDiv = document.getElementById("view-contact-div");
+  showElement(contactDiv);
   console.log(response);
 
   // 1. Populate contact details first
@@ -262,8 +266,6 @@ async function addNoteToContact(params, inputField) {
     // Update the DOM with the new note
     const contactDiv = document.getElementById("view-contact-div");
 
-    // If the server returns the exact date or timestamp for the note, use that.
-    // Otherwise, we can use a client-side timestamp as a placeholder.
     const currentDate = new Date().toLocaleString();
 
     // Create a new paragraph element for the note
@@ -277,7 +279,7 @@ async function addNoteToContact(params, inputField) {
   }
 }
 
-// ------------------ Assign to Me ------------------
+// ------------------ Assign to Me and Swap ------------------
 async function assigntome(params) {
   // Extract the contact ID from the params string
   const urlParams = new URLSearchParams(params);
@@ -293,8 +295,6 @@ async function assigntome(params) {
     // Send the POST request to switchAdmin.php with the contact ID
     const responseText = await postData("switchAdmin.php", { id });
 
-    // Assuming the server returns a success message or the updated assigned user
-    // You may need to adjust this based on your server's response
     if (responseText === "Assignment successful.") {
       console.log(`Contact ID ${id} has been assigned to you.`);
 
@@ -308,7 +308,6 @@ async function assigntome(params) {
         updatedonElement.innerHTML = `<span>Updated on:</span> ${time.toLocaleString()}`;
       }
 
-      // Optionally, display a success message to the user
       alert("You have successfully been assigned to this contact.");
     } else {
       // Handle unexpected responses
@@ -346,8 +345,6 @@ async function swapType(response, params) {
     const responseText = await postData("swaptype.php", { id, newType });
     console.log(responseText);
 
-    // Assuming the server returns a success message or the updated assigned user
-    // You may need to adjust this based on your server's response
     if (responseText === "Type change successful.") {
       console.log(`Contact ID ${id} has been swapped to ${newType}.`);
 
@@ -361,7 +358,6 @@ async function swapType(response, params) {
         updatedonElement.innerHTML = `<span>Updated on:</span> ${time.toLocaleString()}`;
       }
 
-      // Optionally, display a success message to the user
       alert("You have successfully changed type for this contact.");
     } else {
       // Handle unexpected responses
@@ -372,6 +368,190 @@ async function swapType(response, params) {
     console.error("Error changing type:", error);
     alert("An error changing type. Please try again.");
   }
+}
+
+//-------------------Add Contacts---------------
+
+async function handleAddContact() {
+  let response = await postData("getusers.php", "");
+  let title;
+  let fname;
+  let lname;
+  let email;
+  let tel;
+  let comp;
+  let type;
+  let assign;
+  response = JSON.parse(response);
+  console.log(response);
+  let users = [];
+  for (i = 0; i < response.length; i++) {
+    users.push(response[i]["firstname"] + " " + response[i]["lastname"]);
+  }
+  addContactDiv = document.getElementById("add-contact-div");
+  dashboard = document.getElementById("dashboard-div");
+  filterDiv = document.getElementById("filter-div");
+  titleDiv = document.getElementById("title");
+  titleDiv.innerHTML = "Add Contact";
+  hideElement(dashboard);
+  hideElement(filterDiv);
+  showElement(addContactDiv);
+
+  // Clear the addContactDiv before appending new elements
+  addContactDiv.innerHTML = "";
+  //create a add button
+  let button = document.createElement("button");
+  button.textContent = "Add";
+  button.addEventListener(
+    "click",
+    postData("addcontact.php", {
+      title,
+      fname,
+      lname,
+      email,
+      tel,
+      comp,
+      type,
+      assign,
+    })
+  );
+
+  // Create a label and dropdown for Title
+  const titleLabel = document.createElement("label");
+  titleLabel.textContent = "Title: ";
+  titleLabel.setAttribute("for", "title-select");
+  titleLabel.classList.add("form-label");
+
+  const titleSelect = document.createElement("select");
+  titleSelect.id = "title-select";
+  titleSelect.classList.add("form-input");
+  const titleOptions = ["Mr.", "Ms.", "Mrs.", "Dr.", "Sir"];
+  titleOptions.forEach((optText) => {
+    const opt = document.createElement("option");
+    opt.textContent = optText;
+    titleSelect.appendChild(opt);
+  });
+
+  // Create a label and dropdown for type
+  const typeLabel = document.createElement("label");
+  typeLabel.textContent = "Type: ";
+  typeLabel.setAttribute("for", "type-select");
+  typeLabel.classList.add("form-label");
+
+  const typeSelect = document.createElement("select");
+  typeSelect.id = "title-select";
+  typeSelect.classList.add("form-input");
+  const typeOptions = ["Sales Lead", "Support"];
+  typeOptions.forEach((optText) => {
+    const opt = document.createElement("option");
+    opt.textContent = optText;
+    typeSelect.appendChild(opt);
+  });
+
+  // Create a label and dropdown for assign to
+  const assignLabel = document.createElement("label");
+  assignLabel.textContent = "Assign to: ";
+  assignLabel.setAttribute("for", "assign-select");
+  assignLabel.classList.add("form-label");
+
+  const assignSelect = document.createElement("select");
+  assignSelect.id = "assign-select";
+  assignSelect.classList.add("form-input");
+  users.forEach((optText) => {
+    const opt = document.createElement("option");
+    opt.textContent = optText;
+    assignSelect.appendChild(opt);
+  });
+
+  // Create a container for First Name and Last Name
+  const nameContainer = document.createElement("div");
+  nameContainer.classList.add("name-container");
+
+  // Create a label and input for First Name
+  const firstNameLabel = document.createElement("label");
+  firstNameLabel.textContent = "First Name: ";
+  firstNameLabel.setAttribute("for", "first-name-input");
+  firstNameLabel.classList.add("form-label");
+
+  const firstNameInput = document.createElement("input");
+  firstNameInput.type = "text";
+  firstNameInput.id = "first-name-input";
+  firstNameInput.placeholder = "Enter First Name";
+  firstNameInput.classList.add("form-input-inline");
+
+  // Create a label and input for Last Name
+  const lastNameLabel = document.createElement("label");
+  lastNameLabel.textContent = "Last Name: ";
+  lastNameLabel.setAttribute("for", "last-name-input");
+  lastNameLabel.classList.add("form-label");
+
+  const lastNameInput = document.createElement("input");
+  lastNameInput.type = "text";
+  lastNameInput.id = "last-name-input";
+  lastNameInput.placeholder = "Enter Last Name";
+  lastNameInput.classList.add("form-input-inline");
+
+  // Create a label and input for email
+  const emailLabel = document.createElement("label");
+  emailLabel.textContent = "Email: ";
+  emailLabel.setAttribute("for", "email-input");
+  emailLabel.classList.add("form-label");
+
+  const emailInput = document.createElement("input");
+  emailInput.type = "email";
+  emailInput.id = "email-input";
+  emailInput.placeholder = "Enter Email";
+  emailInput.classList.add("form-input");
+
+  // Create a label and input for phone
+  const phoneLabel = document.createElement("label");
+  phoneLabel.textContent = "Telephone: ";
+  phoneLabel.setAttribute("for", "phone-input");
+  phoneLabel.classList.add("form-label");
+
+  const phoneInput = document.createElement("input");
+  phoneInput.type = "tel";
+  phoneInput.id = "phone-input";
+  phoneInput.placeholder = "Enter Telephone";
+  phoneInput.classList.add("form-input");
+
+  // Create a label and input for company
+  const companyLabel = document.createElement("label");
+  companyLabel.textContent = "Company: ";
+  companyLabel.setAttribute("for", "company-input");
+  companyLabel.classList.add("form-label");
+
+  const companyInput = document.createElement("input");
+  companyInput.type = "text";
+  companyInput.id = "company-input";
+  companyInput.placeholder = "Enter company name";
+  companyInput.classList.add("form-input");
+
+  // Append First Name and Last Name elements to the nameContainer
+  nameContainer.appendChild(firstNameLabel);
+  nameContainer.appendChild(firstNameInput);
+  nameContainer.appendChild(lastNameLabel);
+  nameContainer.appendChild(lastNameInput);
+  nameContainer.appendChild(emailLabel);
+
+  // Add styling class to addContactDiv
+  addContactDiv.classList.add("form");
+
+  // Append elements to the addContactDiv
+  addContactDiv.appendChild(titleLabel);
+  addContactDiv.appendChild(titleSelect);
+  addContactDiv.appendChild(nameContainer);
+  addContactDiv.appendChild(emailLabel);
+  addContactDiv.appendChild(emailInput);
+  addContactDiv.appendChild(phoneLabel);
+  addContactDiv.appendChild(phoneInput);
+  addContactDiv.appendChild(companyLabel);
+  addContactDiv.appendChild(companyInput);
+  addContactDiv.appendChild(typeLabel);
+  addContactDiv.appendChild(typeSelect);
+  addContactDiv.appendChild(assignLabel);
+  addContactDiv.appendChild(assignSelect);
+  addContactDiv.appendChild(button);
 }
 
 // ------------------ Utilities ------------------
@@ -412,4 +592,105 @@ async function postData(url, data) {
   }
 
   return response.text();
+}
+
+function createNavigationMenu() {
+  // Check if nav already exists to avoid duplication
+  if (document.getElementById("nav-menu")) {
+    return;
+  }
+
+  // Get the header element and its computed styles
+  const header = document.querySelector("header");
+  const headerHeight = header.offsetHeight;
+
+  // Create nav element
+  const nav = document.createElement("nav");
+  nav.id = "nav-menu";
+  nav.style.position = "fixed";
+  nav.style.left = "0"; // Align to the left edge
+  nav.style.top = `${headerHeight}px`; // Position directly below the header
+  nav.style.height = `calc(100% - ${headerHeight}px)`; // Fill the remaining viewport height
+  nav.style.width = "200px";
+  nav.style.backgroundColor = "#1c2431"; // Match the header's background color for consistency
+  nav.style.color = "#fff";
+  nav.style.borderRight = "1px solid #333"; // Subtle border for separation
+  nav.style.padding = "1rem";
+  nav.style.boxSizing = "border-box";
+
+  // Menu items with handlers and links
+  const menuItems = [
+    { text: "Home", handler: () => home() },
+    { text: "Users", handler: () => alert("Navigating to Users!") },
+    { text: "Logout", link: "index.html" }, // Logout remains a link
+  ];
+
+  menuItems.forEach((item) => {
+    if (item.handler) {
+      // Create a button for items with handlers
+      const menuItem = document.createElement("button");
+      menuItem.innerText = item.text;
+      menuItem.style.display = "block";
+      menuItem.style.marginBottom = "1rem";
+      menuItem.style.color = "#fff";
+      menuItem.style.background = "none";
+      menuItem.style.border = "none";
+      menuItem.style.textAlign = "left";
+      menuItem.style.fontSize = "1rem";
+      menuItem.style.cursor = "pointer";
+      menuItem.style.padding = "0";
+      menuItem.style.textDecoration = "underline";
+
+      // Add hover effect
+      menuItem.addEventListener("mouseover", () => {
+        menuItem.style.color = "#007BFF";
+      });
+      menuItem.addEventListener("mouseout", () => {
+        menuItem.style.color = "#fff";
+      });
+
+      // Attach the function handler
+      menuItem.addEventListener("click", item.handler);
+
+      nav.appendChild(menuItem);
+    } else if (item.link) {
+      // Create an anchor for items with links
+      const menuItem = document.createElement("a");
+      menuItem.href = item.link;
+      menuItem.innerText = item.text;
+      menuItem.style.display = "block";
+      menuItem.style.marginBottom = "1rem";
+      menuItem.style.color = "#fff";
+      menuItem.style.textDecoration = "none";
+      menuItem.style.fontSize = "1rem";
+      menuItem.style.textDecoration = "underline";
+
+      // Add hover effect
+      menuItem.addEventListener("mouseover", () => {
+        menuItem.style.color = "#007BFF";
+      });
+      menuItem.addEventListener("mouseout", () => {
+        menuItem.style.color = "#fff";
+      });
+
+      nav.appendChild(menuItem);
+    }
+  });
+
+  // Append nav to the body
+  document.body.appendChild(nav);
+
+  // Add padding to dashboard to avoid overlap
+  const dashboardDiv = document.getElementById("dashboard-div");
+  dashboardDiv.style.marginLeft = "200px";
+}
+
+async function home() {
+  dashboardDiv = document.getElementById("dashboard-div");
+  viewcon = document.getElementById("view-contact-div");
+  addcon = document.getElementById("add-contact-div");
+  hideElement(viewcon);
+  hideElement(addcon);
+  response = await postData("home.php", "");
+  loadDashboard(response);
 }

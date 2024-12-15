@@ -57,7 +57,6 @@ function loadContacts($contacts)
 {
     // Start the table and add the header row
 
-
     echo '<table border="1"> 
             <tr>
                 <th>ID</td>  
