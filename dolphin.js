@@ -49,6 +49,10 @@ function loadDashboard(responseHTML) {
   const dashboardDiv = document.getElementById("dashboard-div");
   const filterDiv = document.getElementById("filter-div");
   const title = document.getElementById("title");
+  const userDiv = document.getElementById("user-div");
+  const addUserDiv = document.getElementById("add-user-div");
+  hideElement(userDiv);
+  hideElement(addUserDiv);
 
   title.innerHTML = "Dashboard";
   showElement(title);
@@ -170,7 +174,6 @@ function loadContact(response, params) {
   hideElement(userdiv);
   addContactDiv = document.getElementById("add-contact-div");
   showElement(contactDiv);
-  console.log(response);
 
   // 1. Populate contact details first
   contactDiv.innerHTML = createContactDetailsHTML(response);
@@ -338,7 +341,6 @@ async function swapType(response, params) {
   } else if (type === "Type: Support") {
     newType = "Sales Lead";
   }
-  console.log(newType);
 
   if (!id) {
     console.error("No ID found in params.");
@@ -348,7 +350,6 @@ async function swapType(response, params) {
   try {
     // Send the POST request to switchAdmin.php with the contact ID
     const responseText = await postData("swaptype.php", { id, newType });
-    console.log(responseText);
 
     if (responseText === "Type change successful.") {
       console.log(`Contact ID ${id} has been swapped to ${newType}.`);
@@ -536,14 +537,19 @@ async function handleAddContact() {
     const type = typeSelect.value;
     const assign = assignSelect.value;
 
-    console.log(title);
-    console.log(fname);
-    console.log(lname);
-    console.log(email);
-    console.log(tel);
-    console.log(comp);
-    console.log(type);
-    console.log(assign);
+    if (
+      title === "" ||
+      fname === "" ||
+      lname === "" ||
+      email === "" ||
+      tel === "" ||
+      comp === "" ||
+      type === "" ||
+      assign === ""
+    ) {
+      alert("Add valid values.");
+      return;
+    }
 
     // Post the data
     response = await postData("addcontact.php", {
@@ -808,6 +814,19 @@ async function addUserPage() {
     const email = document.getElementById("email-input2").value.trim();
     const password = document.getElementById("password-input2").value.trim();
     const role = document.getElementById("type-select").value;
+    const passwordRegex = /^(?=.*[0-9])(?=.*[A-Za-z]).{8,}$/;
+
+    if (fname === "" || lname === "" || email === "" || password === "") {
+      alert("Add valid values.");
+      return;
+    }
+
+    if (!passwordRegex.test(password)) {
+      alert(
+        "Please enter valid values. Password must be at least 8 characters and include both letters and digits."
+      );
+      return;
+    }
 
     // Send the data using `postData`
     try {
