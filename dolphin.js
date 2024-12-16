@@ -164,6 +164,11 @@ function showContactDetails(response, params) {
 
 function loadContact(response, params) {
   const contactDiv = document.getElementById("view-contact-div");
+  adduserdiv = document.getElementById("add-user-div");
+  userdiv = document.getElementById("user-div");
+  hideElement(adduserdiv);
+  hideElement(userdiv);
+  addContactDiv = document.getElementById("add-contact-div");
   showElement(contactDiv);
   console.log(response);
 
@@ -373,38 +378,175 @@ async function swapType(response, params) {
 //-------------------Add Contacts---------------
 
 async function handleAddContact() {
+  // Fetch existing users
   let response = await postData("getusers.php", "");
-  let title;
-  let fname;
-  let lname;
-  let email;
-  let tel;
-  let comp;
-  let type;
-  let assign;
-  response = JSON.parse(response);
-  console.log(response);
-  let users = [];
-  for (i = 0; i < response.length; i++) {
-    users.push(response[i]["firstname"] + " " + response[i]["lastname"]);
-  }
-  addContactDiv = document.getElementById("add-contact-div");
-  dashboard = document.getElementById("dashboard-div");
-  filterDiv = document.getElementById("filter-div");
-  titleDiv = document.getElementById("title");
+  let [jsonPart, role] = response.split("additional");
+  response = JSON.parse(jsonPart);
+
+  // Extract user list for assignment dropdown
+  let users = response.map(
+    (user) => user["firstname"] + " " + user["lastname"]
+  );
+
+  // Grab reference to elements
+  const addContactDiv = document.getElementById("add-contact-div");
+  const addUserdiv = document.getElementById("add-user-div");
+  const userDiv = document.getElementById("user-div");
+  const dashboard = document.getElementById("dashboard-div");
+  const filterDiv = document.getElementById("filter-div");
+  const titleDiv = document.getElementById("title");
+
+  // Update title and hide/show elements
   titleDiv.innerHTML = "Add Contact";
   hideElement(dashboard);
+  hideElement(userDiv);
+  hideElement(addUserdiv);
   hideElement(filterDiv);
   showElement(addContactDiv);
 
   // Clear the addContactDiv before appending new elements
   addContactDiv.innerHTML = "";
-  //create a add button
-  let button = document.createElement("button");
+  addContactDiv.classList.add("form");
+
+  // Helper function to create labeled input pairs
+  function createLabeledInput(
+    labelText,
+    inputId,
+    inputType = "text",
+    placeholder = "",
+    classes = ["form-input"]
+  ) {
+    const label = document.createElement("label");
+    label.textContent = labelText + ": ";
+    label.setAttribute("for", inputId);
+    label.classList.add("form-label");
+
+    const input = document.createElement("input");
+    input.type = inputType;
+    input.id = inputId;
+    input.placeholder = placeholder;
+    classes.forEach((c) => input.classList.add(c));
+
+    return { label, input };
+  }
+
+  // Helper function to create labeled select dropdown
+  function createLabeledSelect(
+    labelText,
+    selectId,
+    options,
+    classes = ["form-input"]
+  ) {
+    const label = document.createElement("label");
+    label.textContent = labelText + ": ";
+    label.setAttribute("for", selectId);
+    label.classList.add("form-label");
+
+    const select = document.createElement("select");
+    select.id = selectId;
+    classes.forEach((c) => select.classList.add(c));
+
+    options.forEach((optText) => {
+      const opt = document.createElement("option");
+      opt.textContent = optText;
+      select.appendChild(opt);
+    });
+
+    return { label, select };
+  }
+
+  // Title Dropdown
+  const titleOptions = ["Mr.", "Ms.", "Mrs.", "Dr.", "Sir"];
+  const { label: titleLabel, select: titleSelect } = createLabeledSelect(
+    "Title",
+    "title-select",
+    titleOptions
+  );
+
+  // Contact Type Dropdown
+  const typeOptions = ["Sales Lead", "Support"];
+  const { label: typeLabel, select: typeSelect } = createLabeledSelect(
+    "Type",
+    "type-select",
+    typeOptions
+  );
+
+  // Assign-to Dropdown
+  const { label: assignLabel, select: assignSelect } = createLabeledSelect(
+    "Assign to",
+    "assign-select",
+    users
+  );
+
+  // Name inputs
+  const nameContainer = document.createElement("div");
+  nameContainer.classList.add("name-container");
+
+  const { label: firstNameLabel, input: firstNameInput } = createLabeledInput(
+    "First Name",
+    "first-name-input",
+    "text",
+    "Enter First Name",
+    ["form-input-inline"]
+  );
+  const { label: lastNameLabel, input: lastNameInput } = createLabeledInput(
+    "Last Name",
+    "last-name-input",
+    "text",
+    "Enter Last Name",
+    ["form-input-inline"]
+  );
+
+  nameContainer.appendChild(firstNameLabel);
+  nameContainer.appendChild(firstNameInput);
+  nameContainer.appendChild(lastNameLabel);
+  nameContainer.appendChild(lastNameInput);
+
+  // Other fields: email, phone, company
+  const { label: emailLabel, input: emailInput } = createLabeledInput(
+    "Email",
+    "email-input",
+    "email",
+    "Enter Email"
+  );
+  const { label: phoneLabel, input: phoneInput } = createLabeledInput(
+    "Telephone",
+    "phone-input",
+    "tel",
+    "Enter Telephone"
+  );
+  const { label: companyLabel, input: companyInput } = createLabeledInput(
+    "Company",
+    "company-input",
+    "text",
+    "Enter company name"
+  );
+
+  // Add button
+  const button = document.createElement("button");
   button.textContent = "Add";
-  button.addEventListener(
-    "click",
-    postData("addcontact.php", {
+  button.addEventListener("click", async () => {
+    // Get values from inputs when button is clicked
+    const title = titleSelect.value;
+    const fname = firstNameInput.value;
+    const lname = lastNameInput.value;
+    const email = emailInput.value;
+    const tel = phoneInput.value;
+    const comp = companyInput.value;
+    const type = typeSelect.value;
+    const assign = assignSelect.value;
+
+    console.log(title);
+    console.log(fname);
+    console.log(lname);
+    console.log(email);
+    console.log(tel);
+    console.log(comp);
+    console.log(type);
+    console.log(assign);
+
+    // Post the data
+    response = await postData("addcontact.php", {
       title,
       fname,
       lname,
@@ -413,131 +555,13 @@ async function handleAddContact() {
       comp,
       type,
       assign,
-    })
-  );
+    });
 
-  // Create a label and dropdown for Title
-  const titleLabel = document.createElement("label");
-  titleLabel.textContent = "Title: ";
-  titleLabel.setAttribute("for", "title-select");
-  titleLabel.classList.add("form-label");
-
-  const titleSelect = document.createElement("select");
-  titleSelect.id = "title-select";
-  titleSelect.classList.add("form-input");
-  const titleOptions = ["Mr.", "Ms.", "Mrs.", "Dr.", "Sir"];
-  titleOptions.forEach((optText) => {
-    const opt = document.createElement("option");
-    opt.textContent = optText;
-    titleSelect.appendChild(opt);
+    alert(response);
+    home();
   });
 
-  // Create a label and dropdown for type
-  const typeLabel = document.createElement("label");
-  typeLabel.textContent = "Type: ";
-  typeLabel.setAttribute("for", "type-select");
-  typeLabel.classList.add("form-label");
-
-  const typeSelect = document.createElement("select");
-  typeSelect.id = "title-select";
-  typeSelect.classList.add("form-input");
-  const typeOptions = ["Sales Lead", "Support"];
-  typeOptions.forEach((optText) => {
-    const opt = document.createElement("option");
-    opt.textContent = optText;
-    typeSelect.appendChild(opt);
-  });
-
-  // Create a label and dropdown for assign to
-  const assignLabel = document.createElement("label");
-  assignLabel.textContent = "Assign to: ";
-  assignLabel.setAttribute("for", "assign-select");
-  assignLabel.classList.add("form-label");
-
-  const assignSelect = document.createElement("select");
-  assignSelect.id = "assign-select";
-  assignSelect.classList.add("form-input");
-  users.forEach((optText) => {
-    const opt = document.createElement("option");
-    opt.textContent = optText;
-    assignSelect.appendChild(opt);
-  });
-
-  // Create a container for First Name and Last Name
-  const nameContainer = document.createElement("div");
-  nameContainer.classList.add("name-container");
-
-  // Create a label and input for First Name
-  const firstNameLabel = document.createElement("label");
-  firstNameLabel.textContent = "First Name: ";
-  firstNameLabel.setAttribute("for", "first-name-input");
-  firstNameLabel.classList.add("form-label");
-
-  const firstNameInput = document.createElement("input");
-  firstNameInput.type = "text";
-  firstNameInput.id = "first-name-input";
-  firstNameInput.placeholder = "Enter First Name";
-  firstNameInput.classList.add("form-input-inline");
-
-  // Create a label and input for Last Name
-  const lastNameLabel = document.createElement("label");
-  lastNameLabel.textContent = "Last Name: ";
-  lastNameLabel.setAttribute("for", "last-name-input");
-  lastNameLabel.classList.add("form-label");
-
-  const lastNameInput = document.createElement("input");
-  lastNameInput.type = "text";
-  lastNameInput.id = "last-name-input";
-  lastNameInput.placeholder = "Enter Last Name";
-  lastNameInput.classList.add("form-input-inline");
-
-  // Create a label and input for email
-  const emailLabel = document.createElement("label");
-  emailLabel.textContent = "Email: ";
-  emailLabel.setAttribute("for", "email-input");
-  emailLabel.classList.add("form-label");
-
-  const emailInput = document.createElement("input");
-  emailInput.type = "email";
-  emailInput.id = "email-input";
-  emailInput.placeholder = "Enter Email";
-  emailInput.classList.add("form-input");
-
-  // Create a label and input for phone
-  const phoneLabel = document.createElement("label");
-  phoneLabel.textContent = "Telephone: ";
-  phoneLabel.setAttribute("for", "phone-input");
-  phoneLabel.classList.add("form-label");
-
-  const phoneInput = document.createElement("input");
-  phoneInput.type = "tel";
-  phoneInput.id = "phone-input";
-  phoneInput.placeholder = "Enter Telephone";
-  phoneInput.classList.add("form-input");
-
-  // Create a label and input for company
-  const companyLabel = document.createElement("label");
-  companyLabel.textContent = "Company: ";
-  companyLabel.setAttribute("for", "company-input");
-  companyLabel.classList.add("form-label");
-
-  const companyInput = document.createElement("input");
-  companyInput.type = "text";
-  companyInput.id = "company-input";
-  companyInput.placeholder = "Enter company name";
-  companyInput.classList.add("form-input");
-
-  // Append First Name and Last Name elements to the nameContainer
-  nameContainer.appendChild(firstNameLabel);
-  nameContainer.appendChild(firstNameInput);
-  nameContainer.appendChild(lastNameLabel);
-  nameContainer.appendChild(lastNameInput);
-  nameContainer.appendChild(emailLabel);
-
-  // Add styling class to addContactDiv
-  addContactDiv.classList.add("form");
-
-  // Append elements to the addContactDiv
+  // Append all elements to the form
   addContactDiv.appendChild(titleLabel);
   addContactDiv.appendChild(titleSelect);
   addContactDiv.appendChild(nameContainer);
@@ -621,7 +645,7 @@ function createNavigationMenu() {
   // Menu items with handlers and links
   const menuItems = [
     { text: "Home", handler: () => home() },
-    { text: "Users", handler: () => alert("Navigating to Users!") },
+    { text: "Users", handler: () => users() },
     { text: "Logout", link: "index.html" }, // Logout remains a link
   ];
 
@@ -689,8 +713,195 @@ async function home() {
   dashboardDiv = document.getElementById("dashboard-div");
   viewcon = document.getElementById("view-contact-div");
   addcon = document.getElementById("add-contact-div");
+  addUserDiv = document.getElementById("add-user-div");
+  hideElement(addUserDiv);
   hideElement(viewcon);
   hideElement(addcon);
   response = await postData("home.php", "");
   loadDashboard(response);
+}
+
+async function users() {
+  let title = document.getElementById("title");
+  let response = await postData("getusers.php", "");
+  title.textContent = "Users";
+  let contactDiv = document.getElementById("view-contact-div");
+  let dashboard = document.getElementById("dashboard-div");
+  let add = document.getElementById("add-contact-div");
+  let filter = document.getElementById("filter-div");
+  let users = document.getElementById("user-div");
+  addUserDiv = document.getElementById("add-user-div");
+  hideElement(addUserDiv);
+  hideElement(contactDiv);
+  hideElement(dashboard);
+  hideElement(add);
+  hideElement(filter);
+  showElement(users);
+  let [jsonPart, role] = response.split("additional");
+  let addUserBtn = document.createElement("button");
+  addUserBtn.textContent = "+ Add user";
+  users.innerHTML = "";
+  addUserBtn.style.marginBottom = "10px";
+  addUserBtn.addEventListener("click", addUserPage);
+
+  if (role == "user") {
+    users.textContent = "No admin privileges.";
+    return;
+  } else {
+    response = JSON.parse(jsonPart);
+    htmlContent = `
+    <table border="1"> 
+        <tr>
+            <th>Name</th>  
+            <th>Email</th>  
+            <th>Role</th>  
+            <th>Created</th>
+        </tr>
+`;
+
+    for (let i = 0; i < response.length; i++) {
+      const createdAt = new Date(response[i]["created_at"]);
+      htmlContent += `
+        <tr>
+            <td>${response[i]["firstname"]} ${response[i]["lastname"]}</td>
+            <td>${response[i]["email"]}</td>
+            <td>${response[i]["role"]}</td>
+            <td>${createdAt.toLocaleString()}</td>
+        </tr>
+    `;
+    }
+
+    // Close the table tag
+    htmlContent += `</table>`;
+    users.innerHTML = htmlContent;
+    users.appendChild(addUserBtn);
+  }
+  return;
+}
+
+async function addUserPage() {
+  const dashboard = document.getElementById("dashboard-div");
+  const filterDiv = document.getElementById("filter-div");
+  const titleDiv = document.getElementById("title");
+  const userDiv = document.getElementById("user-div");
+  const addUserDiv = document.getElementById("add-user-div");
+
+  // Update the title and hide unnecessary elements
+  titleDiv.innerHTML = "Add User";
+  hideElement(dashboard);
+  hideElement(filterDiv);
+  hideElement(userDiv);
+
+  // Clear the addUserDiv before appending new elements
+  addUserDiv.innerHTML = "";
+
+  // Create a button for submission
+  const button = document.createElement("button");
+  button.textContent = "Add";
+  button.classList.add("form-button");
+
+  // Add a click event listener to handle form submission
+  button.addEventListener("click", async () => {
+    // Read values from the input fields
+    const fname = document.getElementById("first-name-input").value.trim();
+    const lname = document.getElementById("last-name-input").value.trim();
+    const email = document.getElementById("email-input2").value.trim();
+    const password = document.getElementById("password-input2").value.trim();
+    const role = document.getElementById("type-select").value;
+
+    // Send the data using `postData`
+    try {
+      const response = await postData("adduser.php", {
+        fname,
+        lname,
+        email,
+        password,
+        role,
+      });
+
+      if (response === "success") {
+        alert("User added successfully!");
+        home();
+      } else {
+        alert("Failed to add user: " + response.message);
+        home();
+      }
+    } catch (error) {
+      alert("An error occurred: " + error.message);
+      home();
+    }
+  });
+
+  // Create form elements dynamically
+  const typeLabel = document.createElement("label");
+  typeLabel.textContent = "Type: ";
+  typeLabel.setAttribute("for", "type-select");
+  typeLabel.classList.add("form-label");
+
+  const typeSelect = document.createElement("select");
+  typeSelect.id = "type-select";
+  typeSelect.classList.add("form-input");
+  ["user", "admin"].forEach((optText) => {
+    const opt = document.createElement("option");
+    opt.textContent = optText;
+    typeSelect.appendChild(opt);
+  });
+
+  const nameContainer = document.createElement("div");
+  nameContainer.classList.add("name-container");
+
+  const createInputGroup = (labelText, inputId, placeholder, type = "text") => {
+    const label = document.createElement("label");
+    label.textContent = labelText;
+    label.setAttribute("for", inputId);
+    label.classList.add("form-label");
+
+    const input = document.createElement("input");
+    input.type = type;
+    input.id = inputId;
+    input.placeholder = placeholder;
+    input.classList.add("form-input");
+
+    return { label, input };
+  };
+
+  const { label: firstNameLabel, input: firstNameInput } = createInputGroup(
+    "First Name:",
+    "first-name-input",
+    "Enter First Name"
+  );
+  const { label: lastNameLabel, input: lastNameInput } = createInputGroup(
+    "Last Name:",
+    "last-name-input",
+    "Enter Last Name"
+  );
+  const { label: emailLabel, input: emailInput } = createInputGroup(
+    "Email:",
+    "email-input2",
+    "Enter Email",
+    "email"
+  );
+  const { label: passwordLabel, input: passwordInput } = createInputGroup(
+    "Password:",
+    "password-input2",
+    "Enter a password",
+    "password"
+  );
+
+  nameContainer.appendChild(firstNameLabel);
+  nameContainer.appendChild(firstNameInput);
+  nameContainer.appendChild(lastNameLabel);
+  nameContainer.appendChild(lastNameInput);
+
+  addUserDiv.classList.add("form");
+  addUserDiv.appendChild(nameContainer);
+  addUserDiv.appendChild(emailLabel);
+  addUserDiv.appendChild(emailInput);
+  addUserDiv.appendChild(passwordLabel);
+  addUserDiv.appendChild(passwordInput);
+  addUserDiv.appendChild(typeLabel);
+  addUserDiv.appendChild(typeSelect);
+  addUserDiv.appendChild(button);
+
+  showElement(addUserDiv);
 }
