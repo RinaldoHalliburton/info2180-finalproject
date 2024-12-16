@@ -651,6 +651,7 @@ function createNavigationMenu() {
   // Menu items with handlers and links
   const menuItems = [
     { text: "Home", handler: () => home() },
+    { text: "New Contact", handler: () => handleAddContact() },
     { text: "Users", handler: () => users() },
     { text: "Logout", link: "index.html" }, // Logout remains a link
   ];
