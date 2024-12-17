@@ -22,8 +22,8 @@ try {
 // Check if POST data is received
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitize input
-    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+    $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
 
     // Query the database for the user
     $stmt = $pdo->prepare('SELECT * FROM users WHERE email = :email');

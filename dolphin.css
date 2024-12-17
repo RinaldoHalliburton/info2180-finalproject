@@ -102,14 +102,12 @@ header h1 {
   }
   
   .form {
+    max-width: 500px;
     margin: 20px auto;
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 8px;
     background-color: #f9f9f9;
-    scale: 115%;
-    width: 1350px;
-    margin-left: 20%;
   }
   
 
@@ -181,7 +179,7 @@ h1 {
     transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth animations */
   }
 
-/*For viewing a contact*/
+/*For viwing a contact*/
   .details {
     line-height: 1.8;
   }
@@ -208,7 +206,6 @@ table {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     border-radius: 12px;
     overflow: hidden;
-    width:  1500px;
 }
 
 table th, table td {

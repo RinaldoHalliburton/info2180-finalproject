@@ -223,7 +223,6 @@ function loadContact(response, params) {
 function createContactDetailsHTML(response) {
   const createdOn = new Date(response["Created on"]);
   const updatedOn = new Date(response["Updated on"]);
-  console.log(response["Assigned to"]);
   let detailsHtml = `
     <p><span>Name:</span> ${response["Name"]}</p>
     <p><span>Assigned to:</span> ${response["Assigned to"]}</p>
@@ -397,6 +396,7 @@ async function handleAddContact() {
   const dashboard = document.getElementById("dashboard-div");
   const filterDiv = document.getElementById("filter-div");
   const titleDiv = document.getElementById("title");
+  const viewContact = document.getElementById("view-contact-div");
 
   // Update title and hide/show elements
   titleDiv.innerHTML = "Add Contact";
@@ -404,6 +404,7 @@ async function handleAddContact() {
   hideElement(userDiv);
   hideElement(addUserdiv);
   hideElement(filterDiv);
+  hideElement(viewContact);
   showElement(addContactDiv);
 
   // Clear the addContactDiv before appending new elements
@@ -652,7 +653,7 @@ function createNavigationMenu() {
   // Menu items with handlers and links
   const menuItems = [
     { text: "Home", handler: () => home() },
-    { text: "New Contact", handler: () => handleAddContact() },
+    { text: "Add Contact", handler: () => handleAddContact() },
     { text: "Users", handler: () => users() },
     { text: "Logout", link: "index.html" }, // Logout remains a link
   ];
@@ -793,12 +794,14 @@ async function addUserPage() {
   const titleDiv = document.getElementById("title");
   const userDiv = document.getElementById("user-div");
   const addUserDiv = document.getElementById("add-user-div");
+  const addContactDiv = document.getElementById("add-contact-div");
 
   // Update the title and hide unnecessary elements
   titleDiv.innerHTML = "Add User";
   hideElement(dashboard);
   hideElement(filterDiv);
   hideElement(userDiv);
+  hideElement(addContactDiv);
 
   // Clear the addUserDiv before appending new elements
   addUserDiv.innerHTML = "";
