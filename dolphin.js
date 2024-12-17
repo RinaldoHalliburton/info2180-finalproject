@@ -223,6 +223,7 @@ function loadContact(response, params) {
 function createContactDetailsHTML(response) {
   const createdOn = new Date(response["Created on"]);
   const updatedOn = new Date(response["Updated on"]);
+  console.log(response["Assigned to"]);
   let detailsHtml = `
     <p><span>Name:</span> ${response["Name"]}</p>
     <p><span>Assigned to:</span> ${response["Assigned to"]}</p>
